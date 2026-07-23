@@ -162,8 +162,38 @@ export const useObjects = defineStore('objectDetails', () => {
     }
 
     const objectsWithReports = computed(() => {
-        return objects.value.filter((obj) => obj.issues && obj.issues.length && obj.issues.some((issue) => !issue.isResolved))//TODO: Change on !issue.isAccepted or smth)
+        return objects.value.filter((obj) => obj.issues && obj.issues.length && obj.issues.some((issue) => !issue.isResolved))
     })
+
+    const objectsWithArchivedReports = computed(() => {
+        return objects.value.filter((obj) => obj.issues && obj.issues.length && obj.issues.some((issue) => issue.isResolved))
+    })
+
+    async function resolveIssue(issue, isAccepted) {
+        try {
+            const response = await axios.put(`http://localhost:5000/api/Issues/${issue.id}/resolve`, { isAccepted });
+            if (response.status === 200 || response.status === 204) {
+                issue.isResolved = true;
+                issue.isAccepted = isAccepted;
+                renderObjectsOnMap();
+            }
+        } catch (e) {
+            console.error("Failed to resolve issue:", e);
+        }
+    }
+
+    async function reopenIssue(issue) {
+        try {
+            const response = await axios.put(`http://localhost:5000/api/Issues/${issue.id}/reopen`);
+            if (response.status === 200 || response.status === 204) {
+                issue.isResolved = false;
+                issue.isAccepted = false;
+                renderObjectsOnMap();
+            }
+        } catch (e) {
+            console.error("Failed to reopen issue:", e);
+        }
+    }
 
     return {
         map,
@@ -184,5 +214,8 @@ export const useObjects = defineStore('objectDetails', () => {
         updateMapToAdmin,
         updateObject,
         objectsWithReports,
+        objectsWithArchivedReports,
+        resolveIssue,
+        reopenIssue,
     };
 });

@@ -39,11 +39,11 @@
             <div class="details__problems">
                 <span class="title">                
                         <span v-if="object.issues?.length">{{ $t("DetectedProblems") }}
-                            <v-badge :content="object.issues.length" color="red" inline size="small" density="compact"/>
+                            <v-badge :content="object.issues.filter(i => !i.isResolved).length" color="red" inline size="small" density="compact" v-if="object.issues.filter(i => !i.isResolved).length"/>
                         </span>
                         <span v-else>{{ $t("ProblemsAreNotDetected") }}</span>
                 </span>
-                <ProblemsGallery v-if="object.issues" :items="object.issues"/>
+                <ProblemsGallery v-if="object.issues && object.issues.length" :items="object.issues"/>
             </div>
                 <span class="details__table__title title">                
                         <span>{{ $t("InformationAboutObject") }}</span>
