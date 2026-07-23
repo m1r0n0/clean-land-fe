@@ -1,11 +1,12 @@
 <template>
       <v-window v-model="current" :show-arrows="false" class="mb-2">
         <v-window-item
-          v-for="(item, i) in viewItems"
+          v-for="(item, i) in items"
           :key="i"
           :value="i"
           class="pa-5"
         >
+        
         <v-card class="pa-4 problem-card">
           <div class="d-flex justify-center align-center">
               {{ item.description }}

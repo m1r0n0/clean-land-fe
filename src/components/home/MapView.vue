@@ -17,7 +17,7 @@ import { useUserStore } from '@/stores/userStore';
   const { get, response, responseData } = useFetch()
 
   onMounted(async () => {
-    const createdMap = L.map(mapContainer.value, { zoomControl: false }).setView([44.42, 26.11], 10);
+    const createdMap = L.map(mapContainer.value, { zoomControl: false }).setView([49.23, 28.46], 10);
     map.value = createdMap;
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'

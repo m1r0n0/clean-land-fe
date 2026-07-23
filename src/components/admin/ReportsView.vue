@@ -15,9 +15,10 @@
                         <v-badge :content="object.issues.filter(i => !i.isResolved).length" color="red" inline size="small" density="compact" />
                     </v-expansion-panel-title>
                     <v-expansion-panel-text class="w-full">
-                        <v-card class="pa-4 problem-card w-full" v-for="issue of object.issues.filter(i => !i.isResolved)">
+                        <v-card class="pa-4 problem-card w-full" v-for="issue of object.issues.filter(i => !i.isResolved)" :key="issue.id">
                             <div class="d-flex flex-column gap-2 mb-3">
-                                {{ issue.description }}
+                                <img v-if="issue.image" :src="issue.image" class="issue-image mb-2 rounded-lg" style="max-height: 200px; max-width: 100%; object-fit: contain;" />
+                                <span>{{ issue.description }}</span>
                             </div>
                             <div class="d-flex flex-row justify-between ga-3" >
                                 <v-btn rounded="xl" variant="outlined">Accept</v-btn>

@@ -51,14 +51,33 @@ const notifications = useNotificationStore();
 const isValid = ref()
 const { getActionWithHandling } = useHandledAsync();
 const loadingStore = useLoadingStore();
+function convertFileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+    });
+}
+
 async function handleSend() {
     await getActionWithHandling(async () => {
         if(!isValid.value) return;
+
+        let imageBase64 = null;
+        if (imageFile.value) {
+            const rawFile = Array.isArray(imageFile.value) ? imageFile.value[0] : imageFile.value;
+            if (rawFile) {
+                imageBase64 = await convertFileToBase64(rawFile);
+            }
+        }
+
         const newIssue = {
             description: description.value,
             date: new Date().toISOString(),
             isResolved: false,
             isAccepted: false,
+            image: imageBase64,
         }
         if(object.value.assetType === "Forest") {
             newIssue.forestId = object.value.id;
@@ -68,15 +87,14 @@ async function handleSend() {
             newIssue.pondId = object.value.id;
         }
 
-        const response = await axios.post("http://localhost:5000/api/Issues", newIssue)
+        const response = await axios.post("http://localhost:5000/api/Issues", newIssue);
 
-        const formData = new FormData();
-        formData.append('image', imageFile.value);
-        const imageResponse = await axios.post(`http://localhost:5000/api/Images/upload`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data'
+        if (response.data) {
+            if (!object.value.issues) {
+                object.value.issues = [];
             }
-        })
+            object.value.issues.push(response.data);
+        }
 
         description.value = '';
         imageFile.value = null;
